@@ -37,10 +37,13 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
   echo "→ Installing Eza (macOS)"
   brew install eza
 
+  echo "→ Installing ripgrep (macOS)"
+  brew install ripgrep
+
 elif [[ -f /etc/debian_version ]]; then
     # Debian/Ubuntu
     sudo apt update
-    sudo apt install -y curl wezterm starship lazygit eza
+    sudo apt install -y curl wezterm starship lazygit eza ripgrep
 
   echo "→ Installing fonts (Debian/Ubuntu)…"
   FONT_DIR="$HOME/.local/share/fonts"
