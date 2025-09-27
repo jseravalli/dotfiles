@@ -40,10 +40,13 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
   echo "→ Installing ripgrep (macOS)"
   brew install ripgrep
 
+  echo "→ Installing tmux"
+  brew install tmux
+  brew install tpm
 elif [[ -f /etc/debian_version ]]; then
     # Debian/Ubuntu
     sudo apt update
-    sudo apt install -y curl wezterm starship lazygit eza ripgrep
+    sudo apt install -y curl wezterm starship lazygit eza ripgrep tmux
 
   echo "→ Installing fonts (Debian/Ubuntu)…"
   FONT_DIR="$HOME/.local/share/fonts"

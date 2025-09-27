@@ -11,7 +11,7 @@ return {
   font_size = 17.0,
 
   -- Color scheme
-  color_scheme = "Whimsy",
+  color_scheme = 'GJM (terminal.sexy)',
 
   -- Window settings
   enable_tab_bar = true,
