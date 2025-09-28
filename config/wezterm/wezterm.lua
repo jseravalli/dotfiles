@@ -17,9 +17,21 @@ local function list_files(dir)
 end
 
 -- Track index across restarts
-local idx = 1
 local idx_file = wpdir .. "/.last_index"
 local files = list_files(wpdir)
+
+local function read_last_index(file)
+  local f = io.open(file, "r")
+  if f then
+    local last = tonumber(f:read("*all")) or 0
+    f:close()
+    return (last % #files) + 1
+  else
+    return 1
+  end
+end
+
+local idx = read_last_index(idx_file)
 
 local function get_next_wallpaper()
   if #files == 0 then return nil end
@@ -42,7 +54,7 @@ local function get_next_wallpaper()
 end
 
 -- pick initial wallpaper
-local wallpaper = get_next_wallpaper()
+local wallpaper
 
 local function background_layers(file)
   -- Image layer (fit without cropping) + a subtle dark overlay on top
@@ -67,7 +79,9 @@ local function background_layers(file)
 end
 
 local config = {
-  -- Fonts
+default_prog = { "/bin/zsh", "-l", "-c", "tmux -f ~/.config/tmux/tmux.conf" },
+  
+-- Fonts
   font = wezterm.font_with_fallback({ "Fragment Mono", "JetBrains Mono", "FiraCode Nerd Font" }),
   font_size = 17.0,
 
@@ -82,7 +96,7 @@ local config = {
 
   -- Make window slightly translucent + enable macOS blur (this blurs what’s behind the window)
   window_background_opacity = 0.9,
-  macos_window_background_blur = 60, -- requires a recent WezTerm build. :contentReference[oaicite:2]{index=2}
+-- macos_window_background_blur = 60, -- requires a recent WezTerm build. :contentReference[oaicite:2]{index=2}
 
   -- Cursor & scrollback
   default_cursor_style = "BlinkingBlock",
