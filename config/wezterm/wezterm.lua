@@ -54,7 +54,7 @@ local function get_next_wallpaper()
 end
 
 -- pick initial wallpaper
-local wallpaper
+local wallpaper = files[idx]
 
 local function background_layers(file)
   -- Image layer (fit without cropping) + a subtle dark overlay on top
