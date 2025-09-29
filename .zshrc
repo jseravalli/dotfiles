@@ -4,7 +4,7 @@
 alias vi="nvim"
 alias ls="eza --icons -TL 2 -l --git"
 alias grep="rg"
-alias tmux="tmux -f ~/.config/tmux/tmux.conf"
+alias tmux="tmux -f ~/.config/tmux/tmux.conf attach || tmux -f ~/.config/tmux/tmux.conf new"
 
 # Load Starship prompt
 eval "$(starship init zsh)"
