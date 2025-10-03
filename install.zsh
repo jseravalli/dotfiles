@@ -17,7 +17,14 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
         echo "❌ Homebrew not found. Please install it first: https://brew.sh"
         exit 1
     fi
-    brew install --cask wezterm
+   
+    if ! [ -d "/Applications/WezTerm.app" ]; then
+       brew install --cask wezterm
+    else
+       echo "✔️ WezTerm already installed (manual install detected)"
+    fi
+
+
     brew install starship
 
   echo "→ Installing fonts (macOS)…"
@@ -43,6 +50,27 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
   echo "→ Installing tmux"
   brew install tmux
   brew install tpm
+
+  echo "Installing NodeJS"
+  brew install nvm
+  # You should create NVM’s working directory if it doesn’t exist:
+  mkdir -p ~/.nvm
+
+
+  export NVM_DIR="$HOME/.nvm"
+    [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"
+    [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"
+
+
+  nvm install --lts
+  nvm use --lts
+  nvm alias default lts/*
+
+
+  echo "→ Installing lsp servers"
+  npm install -g typescript typescript-language-server
+  brew install lua-language-server
+
 elif [[ -f /etc/debian_version ]]; then
     # Debian/Ubuntu
     sudo apt update
