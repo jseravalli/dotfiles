@@ -23,19 +23,21 @@ return {
         end,
       })
 
-      -- Explicit server configs
+
+      -- TypeScript (ts/tsx/js/jsx)
       vim.lsp.config("tsserver", {
         cmd = { "typescript-language-server", "--stdio" },
-        root_markers = { "tsconfig.json", "package.json" },
+        filetypes = { "typescript", "typescriptreact", "javascript", "javascriptreact" },
+        root_markers = { "package.json", "tsconfig.json" },
       })
 
+      -- Lua
       vim.lsp.config("lua_ls", {
         cmd = { "lua-language-server" },
-        root_markers = { ".git" },
+        filetypes = { "lua" },
+        root_markers = { "lua" },
         settings = {
-          Lua = {
-            diagnostics = { globals = { "vim" } },
-          },
+          Lua = { diagnostics = { globals = { "vim" } } },
         },
       })
 
