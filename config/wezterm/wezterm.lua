@@ -121,6 +121,7 @@ local config = {
   keys = {
     { key = "r", mods = "CTRL|SHIFT", action = wezterm.action.ReloadConfiguration },
     { key = "e", mods = "CMD",      action = wezterm.action.SendKey { key = "e", mods = "CTRL" } },
+    { key = "s", mods = "CMD",      action = wezterm.action.SendKey { key = "s", mods = "CTRL" } },
     {
       key = "r",
       mods = "CMD",            -- ⌘W: next wallpaper instead of close
