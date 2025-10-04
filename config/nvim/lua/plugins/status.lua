@@ -7,38 +7,38 @@ return {
 
     -- Theme definitions from gist
     local theme = {
-      aqua   = "#7AB0DF",
-      bg     = "#1C212A",
-      blue   = "#5FB0FC",
-      cyan   = "#70C0BA",
+      aqua    = "#7AB0DF",
+      bg      = "#1C212A",
+      blue    = "#5FB0FC",
+      cyan    = "#70C0BA",
       darkred = "#FB7373",
-      fg     = "#C7C7CA",
-      gray   = "#222730",
-      green  = "#79DCAA",
-      lime   = "#54CED6",
-      orange = "#FFD064",
-      pink   = "#D997C8",
-      purple = "#C397D8",
-      red    = "#F87070",
-      yellow = "#FFE59E",
+      fg      = "#C7C7CA",
+      gray    = "#222730",
+      green   = "#79DCAA",
+      lime    = "#54CED6",
+      orange  = "#FFD064",
+      pink    = "#D997C8",
+      purple  = "#C397D8",
+      red     = "#F87070",
+      yellow  = "#FFE59E",
     }
 
     local mode_theme = {
-      NORMAL   = theme.green,
-      OP       = theme.cyan,
-      INSERT   = theme.aqua,
-      VISUAL   = theme.yellow,
-      LINES    = theme.darkred,
-      BLOCK    = theme.orange,
-      REPLACE  = theme.purple,
+      NORMAL        = theme.green,
+      OP            = theme.cyan,
+      INSERT        = theme.aqua,
+      VISUAL        = theme.yellow,
+      LINES         = theme.darkred,
+      BLOCK         = theme.orange,
+      REPLACE       = theme.purple,
       ["V-REPLACE"] = theme.pink,
-      ENTER    = theme.pink,
-      MORE     = theme.pink,
-      SELECT   = theme.darkred,
-      SHELL    = theme.cyan,
-      TERM     = theme.lime,
-      NONE     = theme.gray,
-      COMMAND  = theme.blue,
+      ENTER         = theme.pink,
+      MORE          = theme.pink,
+      SELECT        = theme.darkred,
+      SHELL         = theme.cyan,
+      TERM          = theme.lime,
+      NONE          = theme.gray,
+      COMMAND       = theme.blue,
     }
 
     -- Map internal mode codes to display letters
@@ -169,13 +169,28 @@ return {
         local total = vim.api.nvim_buf_line_count(0)
         local p = math.floor(cur / total * 100)
         local fg, style = "purple", nil
-        if p <= 5 then fg, style = "aqua", "bold"
-        elseif p >= 95 then fg, style = "red", "bold" end
+        if p <= 5 then
+          fg, style = "aqua", "bold"
+        elseif p >= 95 then
+          fg, style = "red", "bold"
+        end
         return { fg = fg, bg = "bg", style = style }
       end,
       left_sep = "block",
       right_sep = "block",
     }
+
+    -- Hide statusline/winbar in Neo-tree buffers only
+    vim.api.nvim_create_autocmd('FileType', {
+      pattern = 'neo-tree',
+      callback = function()
+        -- blank local statusline overrides Feline's global one
+        vim.opt_local.statusline = " "
+        -- also kill winbar if you use it
+        vim.opt_local.winbar = ""
+      end,
+    })
+
 
     -- Setup from gist: right side only
     vim.api.nvim_set_hl(0, "StatusLine", { bg = theme.bg, fg = theme.aqua })
@@ -184,7 +199,7 @@ return {
         active = {
           {}, -- left (nothing)
           {}, -- middle
-          {  -- right side
+          {   -- right side
             component.vim_mode,
             component.file_type,
             component.lsp,
@@ -206,4 +221,3 @@ return {
     })
   end,
 }
-

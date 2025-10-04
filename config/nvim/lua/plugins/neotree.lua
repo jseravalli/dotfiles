@@ -15,7 +15,7 @@ return {
         },
       })
 
-      -- Toggle Neo-tree with Command+E (⌘+E)
+      -- ⌘+E to toggle Neo-tree (requires wezterm keymap trick to send Ctrl+E)
       vim.keymap.set("n", "<C-e>", ":Neotree toggle<CR>", { silent = true, desc = "Toggle Neo-tree" })
     end,
   },

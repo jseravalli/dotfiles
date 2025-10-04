@@ -42,7 +42,6 @@ return {
       vim.api.nvim_set_hl(0, "DiagnosticUnderlineInfo", { undercurl = true, sp = "#00aaff" })
       vim.api.nvim_set_hl(0, "DiagnosticUnderlineHint", { undercurl = true, sp = "#55ff55" })
 
-
       -- Setup plugin
       require("tiny-inline-diagnostic").setup({
         preset = "ghost",
