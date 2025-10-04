@@ -48,7 +48,10 @@ local function get_next_wallpaper()
 
   -- write new index
   f = io.open(idx_file, "w")
-  if f then f:write(tostring(idx)) f:close() end
+  if f then
+    f:write(tostring(idx))
+    f:close()
+  end
 
   return files[idx]
 end
@@ -60,21 +63,21 @@ local function background_layers(file)
   -- Image layer (fit without cropping) + a subtle dark overlay on top
   return {
     {
-      source = { Color = "#1c1c1c"},
+      source = { Color = "#1c1c1c" },
       width = "100%",
       height = "100%",
     },
     {
-       source = { File = file },
-       height = "Contain",
-       width  = "Contain",
-       repeat_x = "NoRepeat",
-       repeat_y = "NoRepeat",
-       horizontal_align = "Center",
-       vertical_align   = "Middle",
-       -- optional extra dimming of the image itself:
-       hsb = { brightness = 0.015, saturation = 0.8, hue = 1.0 },
-       opacity = 1.0,
+      source           = { File = file },
+      height           = "Contain",
+      width            = "Contain",
+      repeat_x         = "NoRepeat",
+      repeat_y         = "NoRepeat",
+      horizontal_align = "Center",
+      vertical_align   = "Middle",
+      -- optional extra dimming of the image itself:
+      hsb              = { brightness = 0.015, saturation = 0.8, hue = 1.0 },
+      opacity          = 1.0,
     },
     -- Top overlay to improve readability regardless of the image
     {
@@ -87,10 +90,10 @@ local function background_layers(file)
 end
 
 local config = {
-default_prog = { "/bin/zsh", "-l", "-c", "tmux -f ~/.config/tmux/tmux.conf" },
+  default_prog = { "/bin/zsh", "-l", "-c", "tmux -f ~/.config/tmux/tmux.conf" },
 
   term = "wezterm",
--- Fonts
+  -- Fonts
   font = wezterm.font_with_fallback({ "Fragment Mono", "JetBrains Mono", "FiraCode Nerd Font" }),
   font_size = 17.0,
 
@@ -105,7 +108,7 @@ default_prog = { "/bin/zsh", "-l", "-c", "tmux -f ~/.config/tmux/tmux.conf" },
 
   -- Make window slightly translucent + enable macOS blur (this blurs what’s behind the window)
   -- window_background_opacity = 0.9,
--- macos_window_background_blur = 60, -- requires a recent WezTerm build. :contentReference[oaicite:2]{index=2}
+  -- macos_window_background_blur = 60, -- requires a recent WezTerm build. :contentReference[oaicite:2]{index=2}
 
   -- Cursor & scrollback
   default_cursor_style = "BlinkingBlock",
@@ -117,8 +120,10 @@ default_prog = { "/bin/zsh", "-l", "-c", "tmux -f ~/.config/tmux/tmux.conf" },
   -- Keys
   keys = {
     { key = "r", mods = "CTRL|SHIFT", action = wezterm.action.ReloadConfiguration },
+    { key = "e", mods = "CMD",      action = wezterm.action.SendKey { key = "e", mods = "CTRL" } },
     {
-      key = "r", mods = "CMD", -- ⌘W: next wallpaper instead of close
+      key = "r",
+      mods = "CMD",            -- ⌘W: next wallpaper instead of close
       action = wezterm.action_callback(function(window, pane)
         local next_wp = get_next_wallpaper()
         if next_wp then
@@ -132,4 +137,3 @@ default_prog = { "/bin/zsh", "-l", "-c", "tmux -f ~/.config/tmux/tmux.conf" },
 }
 
 return config
-
