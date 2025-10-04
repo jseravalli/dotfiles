@@ -60,20 +60,28 @@ local function background_layers(file)
   -- Image layer (fit without cropping) + a subtle dark overlay on top
   return {
     {
-      source = { File = file },
-      height = "Contain",
-      width  = "Contain",
-      repeat_x = "NoRepeat",
-      repeat_y = "NoRepeat",
-      horizontal_align = "Center",
-      vertical_align   = "Middle",
-      -- optional extra dimming of the image itself:
-      hsb = { brightness = 0.015, saturation = 0.8, hue = 1.0 },
+      source = { Color = "black"},
+      width = "100%",
+      height = "100%",
+    },
+    {
+       source = { File = file },
+       height = "Contain",
+       width  = "Contain",
+       repeat_x = "NoRepeat",
+       repeat_y = "NoRepeat",
+       horizontal_align = "Center",
+       vertical_align   = "Middle",
+       -- optional extra dimming of the image itself:
+       hsb = { brightness = 0.015, saturation = 0.8, hue = 1.0 },
+       opacity = 1.0,
     },
     -- Top overlay to improve readability regardless of the image
     {
       source = { Color = "black" },
-      opacity = 0.60,
+      opacity = 0.10,
+      width = "100%",
+      height = "100%",
     },
   }
 end
@@ -95,7 +103,7 @@ default_prog = { "/bin/zsh", "-l", "-c", "tmux -f ~/.config/tmux/tmux.conf" },
   window_padding = { top = 0, left = 10, right = 10, bottom = 10 },
 
   -- Make window slightly translucent + enable macOS blur (this blurs what’s behind the window)
-  window_background_opacity = 0.9,
+  -- window_background_opacity = 0.9,
 -- macos_window_background_blur = 60, -- requires a recent WezTerm build. :contentReference[oaicite:2]{index=2}
 
   -- Cursor & scrollback
