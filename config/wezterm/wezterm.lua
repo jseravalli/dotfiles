@@ -60,7 +60,7 @@ local function background_layers(file)
   -- Image layer (fit without cropping) + a subtle dark overlay on top
   return {
     {
-      source = { Color = "black"},
+      source = { Color = "#1c1c1c"},
       width = "100%",
       height = "100%",
     },
