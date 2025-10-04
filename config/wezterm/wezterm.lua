@@ -88,7 +88,8 @@ end
 
 local config = {
 default_prog = { "/bin/zsh", "-l", "-c", "tmux -f ~/.config/tmux/tmux.conf" },
-  
+
+  term = "wezterm",
 -- Fonts
   font = wezterm.font_with_fallback({ "Fragment Mono", "JetBrains Mono", "FiraCode Nerd Font" }),
   font_size = 17.0,

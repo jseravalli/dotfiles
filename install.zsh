@@ -64,12 +64,20 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
 
   nvm install --lts
   nvm use --lts
-  nvm alias default lts/*
+  nvm alias default 'lts/*'
 
 
   echo "→ Installing lsp servers"
   npm install -g typescript typescript-language-server
   brew install lua-language-server
+
+  echo "enabling curly lines"
+  tempfile=$(mktemp) \
+  && curl -o $tempfile https://raw.githubusercontent.com/wezterm/wezterm/master/termwiz/data/wezterm.terminfo \
+  && tic -x -o ~/.terminfo $tempfile \
+  && rm $tempfile
+
+  export TERM=wezterm nvim
 
 elif [[ -f /etc/debian_version ]]; then
     # Debian/Ubuntu

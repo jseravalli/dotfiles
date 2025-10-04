@@ -25,9 +25,23 @@ return {
             [vim.diagnostic.severity.ERROR] = "Error",
           },
         },
-        underline = true,
+        underline = {
+          severity = {
+            vim.diagnostic.severity.ERROR,
+            vim.diagnostic.severity.WARN,
+            vim.diagnostic.severity.INFO,
+            vim.diagnostic.severity.HINT,
+          },
+        },
         update_in_insert = false,
       })
+
+      vim.opt.termguicolors = true
+      vim.api.nvim_set_hl(0, "DiagnosticUnderlineError", { undercurl = true, sp = "#ff5555" })
+      vim.api.nvim_set_hl(0, "DiagnosticUnderlineWarn", { undercurl = true, sp = "#ffaa00" })
+      vim.api.nvim_set_hl(0, "DiagnosticUnderlineInfo", { undercurl = true, sp = "#00aaff" })
+      vim.api.nvim_set_hl(0, "DiagnosticUnderlineHint", { undercurl = true, sp = "#55ff55" })
+
 
       -- Setup plugin
       require("tiny-inline-diagnostic").setup({
