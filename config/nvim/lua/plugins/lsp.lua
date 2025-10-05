@@ -33,10 +33,20 @@ return {
         server = {
           type = "nodejs",
           cmd = { "copilot-language-server", "--stdio" },
+          settings = {
+            advanced = {
+              multilineCompletions = true, -- multi-line code blocks
+              maxCompletions = 5,          -- multiple ideas at once
+              inlineSuggestCount = 3,      -- inline options
+              contextCount = 2500,         -- look at ~2.5k lines of context
+              completionPreview = true,    -- let Blink preview them
+              debounce = 40,               -- faster refresh
+            },
+          },
         },
         auto_attach = true,
         show_progress = true,
-        model = "gpt-4o-mini",
+        model = "gpt-4o-mini", -- or "gpt-4o" if you have access
         nes = { enabled = true },
       })
       -----------------------------------------------------------------------
