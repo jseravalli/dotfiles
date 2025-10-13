@@ -4,8 +4,8 @@ return {
 		version = false,
 		event = "VeryLazy",
 		config = function()
-			-- Set a single nice color for the current scope line
-			vim.api.nvim_set_hl(0, "MiniIndentscopeSymbol", { fg = "#eb6f92" })
+			-- Set a single nice color for the current scope line (Tokyo Night purple)
+			vim.api.nvim_set_hl(0, "MiniIndentscopeSymbol", { fg = "#bb9af7" })
 
 			require("mini.indentscope").setup({
 				symbol = "│",
