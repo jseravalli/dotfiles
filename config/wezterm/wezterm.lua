@@ -97,6 +97,10 @@ local config = {
   font = wezterm.font_with_fallback({ "Fragment Mono", "JetBrains Mono", "FiraCode Nerd Font" }),
   font_size = 17.0,
 
+  -- Font rendering - improve sharpness
+  freetype_load_target = "Normal",
+  freetype_render_target = "HorizontalLcd",
+
   -- Colors
   color_scheme = "GJM (terminal.sexy)",
 
