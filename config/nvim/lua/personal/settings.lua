@@ -1,4 +1,5 @@
 vim.opt.number = true -- Show absolute line numbers
+vim.opt.signcolumn = "yes" -- Always show sign column for git signs
 -- Enable truecolor support
 vim.opt.termguicolors = true
 

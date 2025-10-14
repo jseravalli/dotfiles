@@ -35,9 +35,23 @@ end, { desc = "Format buffer" })
 vim.keymap.set("n", "<C-s>", ":w<CR>", { silent = true, desc = "Save file" })
 vim.keymap.set("i", "<C-s>", "<Esc>:w<CR>a", { silent = true, desc = "Save file" })
 
--- Quit Neovim
-vim.keymap.set("n", "<leader>q", ":qa<CR>", { silent = true, desc = "Quit all" })
-vim.keymap.set("n", "<leader>Q", ":qa!<CR>", { silent = true, desc = "Force quit all (no save)" })
+-- Command+Left/Right to jump to beginning/end of line in insert and visual mode
+-- WezTerm sends these as Alt+Arrow keys
+vim.keymap.set("i", "<M-Left>", "<C-o>^", { silent = true, desc = "Jump to beginning of line" })
+vim.keymap.set("i", "<M-Right>", "<C-o>$", { silent = true, desc = "Jump to end of line" })
+vim.keymap.set("v", "<M-Left>", "^", { silent = true, desc = "Jump to beginning of line" })
+vim.keymap.set("v", "<M-Right>", "$", { silent = true, desc = "Jump to end of line" })
+
+-- Tab navigation (Shift-Tab cycles through tabs, wraps around)
+vim.keymap.set("n", "<S-Tab>", function()
+  local current_tab = vim.fn.tabpagenr()
+  local total_tabs = vim.fn.tabpagenr("$")
+  if current_tab == total_tabs then
+    vim.cmd("tabfirst") -- Wrap to first tab
+  else
+    vim.cmd("tabnext") -- Go to next tab
+  end
+end, { silent = true, desc = "Next tab (wrap around)" })
 
 -- Open URL under cursor in browser (macOS)
 local function open_url()

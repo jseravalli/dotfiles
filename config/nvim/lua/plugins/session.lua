@@ -8,8 +8,8 @@ return {
     -- Manual save only (don't auto save on exit)
     auto_save = false,
 
-    -- Don't auto restore - use manual restore with <leader>sr
-    auto_restore = false,
+    -- Auto restore session on startup if session exists in folder
+    auto_restore = true,
 
     -- Don't auto create new session files
     auto_create = false,
@@ -43,10 +43,10 @@ return {
 
     require("auto-session").setup(opts)
 
-    -- Keymaps for manual session management
-    vim.keymap.set("n", "<leader>ss", "<cmd>SessionSave<CR>", { desc = "Save session" })
-    vim.keymap.set("n", "<leader>sr", "<cmd>SessionRestore<CR>", { desc = "Restore session" })
-    vim.keymap.set("n", "<leader>sd", "<cmd>SessionDelete<CR>", { desc = "Delete session" })
-    vim.keymap.set("n", "<leader>sf", "<cmd>SessionSearch<CR>", { desc = "Search sessions" })
+    -- Keymaps for manual session management (using new AutoSession commands)
+    vim.keymap.set("n", "<leader>ss", "<cmd>AutoSession save<CR>", { desc = "Save session" })
+    vim.keymap.set("n", "<leader>sr", "<cmd>AutoSession restore<CR>", { desc = "Restore session" })
+    vim.keymap.set("n", "<leader>sd", "<cmd>AutoSession delete<CR>", { desc = "Delete session" })
+    vim.keymap.set("n", "<leader>sf", "<cmd>AutoSession search<CR>", { desc = "Search sessions" })
   end,
 }

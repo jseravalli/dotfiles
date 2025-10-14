@@ -16,6 +16,11 @@ return {
           "javascript", "javascriptreact",
         },
         root_markers = { "package.json", "tsconfig.json" },
+        capabilities = {
+          general = {
+            positionEncodings = { "utf-16" },
+          },
+        },
       })
 
       vim.lsp.config("lua_ls", {
@@ -23,6 +28,11 @@ return {
         filetypes = { "lua" },
         settings = {
           Lua = { diagnostics = { globals = { "vim" } } },
+        },
+        capabilities = {
+          general = {
+            positionEncodings = { "utf-16" },
+          },
         },
       })
 
@@ -49,10 +59,24 @@ return {
         model = "gpt-4o-mini", -- or "gpt-4o" if you have access
         nes = { enabled = true },
       })
+
+
+
+      vim.lsp.config("biome", {
+        cmd = { "biome", "lsp-proxy" }, -- Biome's LSP mode
+        filetypes = { "javascript", "javascriptreact", "typescript", "typescriptreact", "json", "jsonc" },
+        root_markers = { "biome.json", "biome.jsonc", "package.json", "tsconfig.json", ".git" },
+        capabilities = {
+          general = {
+            positionEncodings = { "utf-16" },
+          },
+        },
+      })
+
       -----------------------------------------------------------------------
       -- ✅ Enable all LSPs (one call)
       -----------------------------------------------------------------------
-      vim.lsp.enable({ "lua_ls", "tsserver", "copilot_ls" })
+      vim.lsp.enable({ "lua_ls", "tsserver", "biome", "copilot_ls" })
 
       -----------------------------------------------------------------------
       -- ⌨️ Smart Tab & Escape (Copilot > Blink > Snippet > Fallback)
