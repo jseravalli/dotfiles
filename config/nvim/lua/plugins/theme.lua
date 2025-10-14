@@ -3,7 +3,7 @@ return {
 	priority = 1000,
 	config = function()
 		require("tokyonight").setup({
-			style = "night", -- storm, moon, night, or day
+			style = "moon", -- storm, moon, night, or day
 			transparent = true,
 			terminal_colors = true,
 			styles = {
@@ -13,6 +13,6 @@ return {
 				floats = "transparent",
 			},
 		})
-		vim.cmd("colorscheme tokyonight")
+		vim.cmd("colorscheme tokyonight-moon")
 	end,
 }
