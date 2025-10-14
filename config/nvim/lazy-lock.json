@@ -20,7 +20,10 @@
   "oil.nvim": { "branch": "master", "commit": "919e155fdf38e9148cdb5304faaaf53c20d703ea" },
   "plenary.nvim": { "branch": "master", "commit": "b9fd5226c2f76c951fc8ed5923d85e4de065e509" },
   "ripgrep": { "branch": "master", "commit": "119a58a400ea948c2d2b0cd4ec58361e74478641" },
+<<<<<<< HEAD
   "smear-cursor.nvim": { "branch": "main", "commit": "abfa5835920b1d76c0e24e1465a618ad914be90a" },
+=======
+>>>>>>> 7a437cc (Resolve merge conflict in lazy-lock.json)
   "telescope-fzf-native.nvim": { "branch": "main", "commit": "1f08ed60cafc8f6168b72b80be2b2ea149813e55" },
   "telescope.nvim": { "branch": "master", "commit": "a0bbec21143c7bc5f8bb02e0005fa0b982edc026" },
   "tiny-inline-diagnostic.nvim": { "branch": "main", "commit": "6d8dc61a9c4077d9ec62a9c8998506dcd2a5b6af" },
