@@ -2,6 +2,10 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## CRITICAL: Git Branch Rules
+
+**NEVER push to the `zenjob` branch.** This branch contains sensitive tokens in `.zshrc` file history that will trigger GitHub's push protection. Always work on other branches when pushing changes.
+
 ## Repository Overview
 
 This is a personal dotfiles repository for managing development environment configuration across macOS and Debian/Ubuntu systems. The setup uses symlinks to deploy configuration files from this repo to their expected locations in the user's home directory.
