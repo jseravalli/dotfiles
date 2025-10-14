@@ -34,8 +34,15 @@ return {
       "Neotree close",
     },
 
-    -- Don't reopen Neo-tree automatically
-    post_restore_cmds = {},
+    -- Auto-refresh rainbow brackets after session restore
+    post_restore_cmds = {
+      function()
+        -- Delay the buffer reload to let treesitter fully initialize
+        vim.defer_fn(function()
+          vim.cmd("bufdo e")
+        end, 200)
+      end,
+    },
   },
   config = function(_, opts)
     -- Set sessionoptions to properly save/restore buffers
