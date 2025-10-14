@@ -48,5 +48,12 @@ return {
     vim.keymap.set("n", "<leader>sr", "<cmd>AutoSession restore<CR>", { desc = "Restore session" })
     vim.keymap.set("n", "<leader>sd", "<cmd>AutoSession delete<CR>", { desc = "Delete session" })
     vim.keymap.set("n", "<leader>sf", "<cmd>AutoSession search<CR>", { desc = "Search sessions" })
+
+    -- Create command to refresh rainbow brackets and indent lines after session restore
+    vim.api.nvim_create_user_command("RefreshRainbow", function()
+      vim.cmd("bufdo e")
+    end, { desc = "Refresh rainbow brackets and indent lines" })
+
+    vim.keymap.set("n", "<leader>rr", "<cmd>RefreshRainbow<CR>", { desc = "Refresh rainbow" })
   end,
 }
