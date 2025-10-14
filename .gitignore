@@ -2,3 +2,5 @@ config/raycast
 config/github-copilot
 config/tmux/plugins
 
+# Neovim session files
+.nvim/

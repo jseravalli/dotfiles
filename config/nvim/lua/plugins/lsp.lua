@@ -1,9 +1,39 @@
 return {
   ---------------------------------------------------------------------------
-  -- 🤖 GitHub Copilot + native LSP setup (multi-line completions)
+  -- 🤖 GitHub Copilot (Official Plugin)
   ---------------------------------------------------------------------------
   {
-    "copilotlsp-nvim/copilot-lsp",
+    "github/copilot.vim",
+    lazy = false, -- Load immediately
+    config = function()
+      -- Accept Copilot suggestion with Tab
+      vim.keymap.set('i', '<Tab>', function()
+        -- Check if Copilot has a suggestion
+        if vim.fn['copilot#GetDisplayedSuggestion']().text ~= '' then
+          return vim.fn['copilot#Accept']("")
+        else
+          -- If no Copilot suggestion, check if blink menu is open
+          local blink_ok, blink = pcall(require, "blink.cmp")
+          if blink_ok and blink.is_visible() then
+            blink.select_next()
+            return ""
+          end
+
+          -- Otherwise, normal tab
+          return "\t"
+        end
+      end, { expr = true, replace_keycodes = false, silent = true })
+
+      -- Enable Copilot for all filetypes
+      vim.g.copilot_filetypes = { ['*'] = true }
+    end,
+  },
+
+  ---------------------------------------------------------------------------
+  -- 🧠 Native LSP setup (Neovim ≥ 0.10)
+  ---------------------------------------------------------------------------
+  {
+    "neovim/nvim-lspconfig",
     lazy = false,
     config = function()
       -----------------------------------------------------------------------
@@ -16,6 +46,11 @@ return {
           "javascript", "javascriptreact",
         },
         root_markers = { "package.json", "tsconfig.json" },
+        capabilities = {
+          general = {
+            positionEncodings = { "utf-16" },
+          },
+        },
       })
 
       vim.lsp.config("lua_ls", {
@@ -24,99 +59,61 @@ return {
         settings = {
           Lua = { diagnostics = { globals = { "vim" } } },
         },
-      })
-
-      -----------------------------------------------------------------------
-      -- 💡 Copilot LSP setup (multi-line completions via NES)
-      -----------------------------------------------------------------------
-      require("copilot-lsp").setup({
-        server = {
-          type = "nodejs",
-          cmd = { "copilot-language-server", "--stdio" },
-          settings = {
-            advanced = {
-              multilineCompletions = true, -- multi-line code blocks
-              maxCompletions = 5,          -- multiple ideas at once
-              inlineSuggestCount = 3,      -- inline options
-              contextCount = 2500,         -- look at ~2.5k lines of context
-              completionPreview = true,    -- let Blink preview them
-              debounce = 40,               -- faster refresh
-            },
+        capabilities = {
+          general = {
+            positionEncodings = { "utf-16" },
           },
         },
-        auto_attach = true,
-        show_progress = true,
-        model = "gpt-4o-mini", -- or "gpt-4o" if you have access
-        nes = { enabled = true },
       })
+
+
+
+
+      vim.lsp.config("biome", {
+        cmd = { "biome", "lsp-proxy" }, -- Biome's LSP mode
+        filetypes = { "javascript", "javascriptreact", "typescript", "typescriptreact", "json", "jsonc" },
+        root_markers = { "biome.json", "biome.jsonc", "package.json", "tsconfig.json", ".git" },
+        capabilities = {
+          general = {
+            positionEncodings = { "utf-16" },
+          },
+        },
+      })
+
       -----------------------------------------------------------------------
       -- ✅ Enable all LSPs (one call)
       -----------------------------------------------------------------------
-      vim.lsp.enable({ "lua_ls", "tsserver", "copilot_ls" })
+      vim.lsp.enable({ "lua_ls", "tsserver", "biome" })
 
       -----------------------------------------------------------------------
-      -- ⌨️ Smart Tab & Escape (Copilot > Blink > Snippet > Fallback)
+      -- ⌨️ Snippet navigation (Copilot Tab is configured in copilot.vim section)
       -----------------------------------------------------------------------
-      vim.keymap.set("i", "<Tab>", function()
-        -- Handle Copilot NES multiline suggestion
-        if vim.b[vim.api.nvim_get_current_buf()].nes_state then
-          require("blink.cmp").hide()
-          require("copilot-lsp.nes").apply_pending_nes()
-          require("copilot-lsp.nes").walk_cursor_end_edit()
-          return
-        end
+      -- Note: Tab is handled by Copilot plugin (accepts suggestions or navigates blink menu)
 
-        -- Copilot inline ghost text
-        local ok, copilot = pcall(require, "copilot.suggestion")
-        if ok and copilot.is_visible() then
-          copilot.accept()
-          vim.api.nvim_feedkeys(
-            vim.api.nvim_replace_termcodes("<CR>", true, false, true),
-            "n",
-            true
-          )
-          return
-        end
-
-        -- Blink completion menu
-        local blink_ok, blink = pcall(require, "blink.cmp")
-        if blink_ok and blink.is_visible() then
-          vim.api.nvim_feedkeys(
-            vim.api.nvim_replace_termcodes("<Plug>(blink-cmp-next)", true, true, true),
-            "n",
-            true
-          )
-          return
-        end
-
-        -- Snippet jump
-        if vim.snippet.active({ direction = 1 }) then
-          vim.snippet.jump(1)
-          return
-        end
-
-        -- Literal Tab fallback
-        vim.api.nvim_feedkeys(
-          vim.api.nvim_replace_termcodes("<Tab>", true, false, true),
-          "n",
-          true
-        )
-      end, { silent = true, desc = "Smart Tab (Copilot > Blink > Snippet > Tab)" })
+      -- Note: Ctrl+Space and Shift+Tab are handled by blink.cmp keymap (see blink config below)
 
       vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, { desc = "LSP Code Action" })
 
+      -- Diagnostic keybindings
+      vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, { desc = "Previous diagnostic" })
+      vim.keymap.set("n", "]d", vim.diagnostic.goto_next, { desc = "Next diagnostic" })
+      vim.keymap.set("n", "<leader>e", vim.diagnostic.open_float, { desc = "Show diagnostic" })
+      vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, { desc = "Diagnostic list" })
+
       vim.keymap.set("i", "<Esc>", function()
-        local ok, copilot = pcall(require, "copilot.suggestion")
-        if ok and copilot.is_visible() then
-          copilot.dismiss()
-        else
-          vim.api.nvim_feedkeys(
-            vim.api.nvim_replace_termcodes("<Esc>", true, false, true),
-            "n",
-            true
-          )
+        -- Hide Blink completion if visible
+        local blink_ok, blink = pcall(require, "blink.cmp")
+        if blink_ok and blink.is_visible() then
+          blink.hide()
         end
-      end, { silent = true, desc = "Dismiss Copilot or Escape" })
+
+        -- Normal escape behavior
+        vim.api.nvim_feedkeys(
+          vim.api.nvim_replace_termcodes("<Esc>", true, false, true),
+          "n",
+          true
+        )
+      end, { silent = true, desc = "Hide completion or Escape" })
     end,
   },
 
@@ -134,37 +131,68 @@ return {
   {
     "saghen/blink.cmp",
     version = "1.*",
-    dependencies = { "onsails/lspkind.nvim" },
+    dependencies = {
+      "onsails/lspkind.nvim",
+    },
     opts = function()
       local ok, lspkind = pcall(require, "lspkind")
       return {
         appearance = {
           use_nvim_cmp_as_default = true,
+          nerd_font_variant = "mono",
           kind_icons = ok and lspkind.presets.default or {},
-          highlight_groups = {
-            Copilot = { fg = "#6E738D", italic = true },
-          },
         },
         completion = {
           documentation = {
             auto_show = true,
             auto_show_delay_ms = 100,
-            max_height = 20,
-            max_width = 80,
+            update_delay_ms = 50,
+            treesitter_highlighting = true,
             window = {
+              min_width = 10,
+              max_width = 80,
+              max_height = 20,
               border = "rounded",
-              winhighlight = "Normal:Normal,FloatBorder:FloatBorder",
+              winblend = 0,
+              winhighlight = "Normal:BlinkCmpDoc,FloatBorder:BlinkCmpDocBorder,EndOfBuffer:BlinkCmpDoc",
+              scrollbar = true,
             },
           },
           menu = {
+            min_width = 15,
+            max_height = 10,
             border = "rounded",
-            scrollbar = true,
             winblend = 8,
-            winhighlight = "Normal:Normal,FloatBorder:FloatBorder,CursorLine:Visual,Search:None",
+            scrollbar = true,
+            scrolloff = 2,
+            winhighlight = "Normal:BlinkCmpMenu,FloatBorder:BlinkCmpMenuBorder,CursorLine:BlinkCmpMenuSelection,Search:None",
           },
         },
         sources = {
           default = { "lsp", "path", "snippets", "buffer" },
+          providers = {
+            lsp = {
+              name = "LSP",
+              module = "blink.cmp.sources.lsp",
+              score_offset = 0,
+            },
+          },
+        },
+        signature = {
+          enabled = true,
+          trigger = {
+            enabled = true,
+            show_on_insert_on_trigger_character = true,
+          },
+          window = {
+            min_width = 1,
+            max_width = 80,
+            max_height = 10,
+            border = "rounded",
+            winblend = 0,
+            winhighlight = "Normal:BlinkCmpSignatureHelp,FloatBorder:BlinkCmpSignatureHelpBorder",
+            scrollbar = true,
+          },
         },
         snippets = {
           expand = function(args)
@@ -172,20 +200,14 @@ return {
           end,
         },
         keymap = {
-          preset = "super-tab",
-          ["<Tab>"] = {
-            function(cmp)
-              if vim.b[vim.api.nvim_get_current_buf()].nes_state then
-                cmp.hide()
-                require("copilot-lsp.nes").apply_pending_nes()
-                require("copilot-lsp.nes").walk_cursor_end_edit()
-                return true
-              end
-            end,
-            "accept",
-            "snippet_forward",
-            "fallback",
-          },
+          preset = "enter",
+          ["<CR>"] = { "accept", "fallback" },
+          ["<Up>"] = { "select_prev", "fallback" },
+          ["<Down>"] = { "select_next", "fallback" },
+          ["<S-Tab>"] = { "select_prev", "fallback" },
+          ["<C-n>"] = { "show", "show", "show" },
+          ["<C-space>"] = { "show", "show", "show" },
+          ["<C-e>"] = { "hide", "fallback" },
         },
       }
     end,

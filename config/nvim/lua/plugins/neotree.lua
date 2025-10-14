@@ -6,12 +6,13 @@ return {
       "nvim-lua/plenary.nvim",
       "nvim-tree/nvim-web-devicons",
       "MunifTanjim/nui.nvim",
+      "rmagatti/auto-session", -- Load session before Neo-tree
     },
     config = function()
       require("neo-tree").setup({
         filesystem = {
           follow_current_file = true,
-          hijack_netrw_behavior = "open_default",
+          hijack_netrw_behavior = "disabled", -- Let oil handle directory browsing
         },
       })
 

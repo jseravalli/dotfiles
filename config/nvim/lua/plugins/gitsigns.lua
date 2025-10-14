@@ -13,7 +13,7 @@ return {
       },
       current_line_blame = true, -- enable blame inline
       current_line_blame_opts = {
-        delay = 200,             -- how long before showing
+        delay = 0,               -- show immediately
         virt_text_pos = "eol",   -- "eol" | "overlay" | "right_align"
       },
       current_line_blame_formatter = "<author>, <author_time:%R> • <summary>",

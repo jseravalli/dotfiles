@@ -1,223 +1,307 @@
 return {
-  "feline-nvim/feline.nvim",
+  "nvim-lualine/lualine.nvim",
   dependencies = { "nvim-tree/nvim-web-devicons" },
   config = function()
-    local present, feline = pcall(require, "feline")
-    if not present then return end
-
-    -- Theme definitions from gist
-    local theme = {
-      aqua    = "#7AB0DF",
-      bg      = "#1C212A",
-      blue    = "#5FB0FC",
-      cyan    = "#70C0BA",
-      darkred = "#FB7373",
-      fg      = "#C7C7CA",
-      gray    = "#222730",
-      green   = "#79DCAA",
-      lime    = "#54CED6",
-      orange  = "#FFD064",
-      pink    = "#D997C8",
-      purple  = "#C397D8",
-      red     = "#F87070",
-      yellow  = "#FFE59E",
-    }
-
-    local mode_theme = {
-      NORMAL        = theme.green,
-      OP            = theme.cyan,
-      INSERT        = theme.aqua,
-      VISUAL        = theme.yellow,
-      LINES         = theme.darkred,
-      BLOCK         = theme.orange,
-      REPLACE       = theme.purple,
-      ["V-REPLACE"] = theme.pink,
-      ENTER         = theme.pink,
-      MORE          = theme.pink,
-      SELECT        = theme.darkred,
-      SHELL         = theme.cyan,
-      TERM          = theme.lime,
-      NONE          = theme.gray,
-      COMMAND       = theme.blue,
-    }
-
-    -- Map internal mode codes to display letters
-    local modes = setmetatable({
-      ["n"] = "N",
-      ["V"] = "V",
-      ["i"] = "I",
-      ["c"] = "C",
-      ["R"] = "R",
-      ["t"] = "T",
-      -- plus other combos if needed
-    }, {
-      __index = function() return "-" end
-    })
-
-    -- Define components, adapted from gist but updated for new LSP API
-    local component = {}
-
-    component.vim_mode = {
-      provider = function()
-        local m = vim.api.nvim_get_mode().mode
-        return modes[m] or m
+    -- Conditions for conditional component rendering
+    local conditions = {
+      buffer_not_empty = function()
+        return vim.fn.empty(vim.fn.expand("%:t")) ~= 1
       end,
-      hl = function()
-        return {
-          fg = "bg",
-          bg = require("feline.providers.vi_mode").get_mode_color(),
-          style = "bold",
-          name = "NeovimModeHLColor",
-        }
+      hide_in_width = function()
+        return vim.fn.winwidth(0) > 80
       end,
-      left_sep = "block",
-      right_sep = "block",
-    }
-
-    component.git_branch = {
-      provider = "git_branch",
-      hl = { fg = "fg", bg = "bg", style = "bold" },
-      left_sep = "block",
-      right_sep = "",
-    }
-
-    component.git_add = {
-      provider = "git_diff_added",
-      hl = { fg = "green", bg = "bg" },
-    }
-    component.git_delete = {
-      provider = "git_diff_removed",
-      hl = { fg = "red", bg = "bg" },
-    }
-    component.git_change = {
-      provider = "git_diff_changed",
-      hl = { fg = "purple", bg = "bg" },
-    }
-    component.separator = {
-      provider = "",
-      hl = { fg = "bg", bg = "bg" },
-    }
-
-    component.diagnostic_errors = {
-      provider = "diagnostic_errors",
-      hl = { fg = "red" },
-    }
-    component.diagnostic_warnings = {
-      provider = "diagnostic_warnings",
-      hl = { fg = "yellow" },
-    }
-    component.diagnostic_hints = {
-      provider = "diagnostic_hints",
-      hl = { fg = "aqua" },
-    }
-    component.diagnostic_info = {
-      provider = "diagnostic_info",
-      hl = { fg = "fg" },
-    }
-
-    component.lsp = {
-      provider = function()
-        local clients = vim.lsp.get_clients({ bufnr = 0 })
-        if #clients == 0 then return "" end
-        local status = vim.lsp.status()
-        if status and status ~= "" then
-          return status
-        end
-        return "לּ LSP"
+      check_git_workspace = function()
+        local filepath = vim.fn.expand("%:p:h")
+        local gitdir = vim.fn.finddir(".git", filepath .. ";")
+        return gitdir and #gitdir > 0 and #gitdir < #filepath
       end,
-      hl = function()
-        local status = vim.lsp.status()
-        return {
-          fg = (status and status ~= "") and "yellow" or "green",
-          bg = "gray",
-          style = "bold",
-        }
-      end,
-      left_sep = "",
-      right_sep = "block",
     }
 
-    component.file_type = {
-      provider = {
-        name = "file_type",
-        opts = { filetype_icon = true },
+    -- Tokyo Night Moon colors for bubbles theme
+    local colors = {
+      blue     = "#82aaff",
+      cyan     = "#86e1fc",
+      black    = "#1e2030",
+      white    = "#c8d3f5",
+      red      = "#ff757f",
+      violet   = "#fca7ea",
+      grey     = "#222436",
+      green    = "#c3e88d",
+      yellow   = "#ffc777",
+      orange   = "#ff966c",
+      magenta  = "#c099ff",
+      teal     = "#4fd6be",
+    }
+
+    local bubbles_theme = {
+      normal = {
+        a = { fg = colors.black, bg = colors.violet, gui = "bold" },
+        b = { fg = colors.white, bg = colors.grey },
+        c = { fg = colors.white },
       },
-      hl = { fg = "fg", bg = "gray" },
-      left_sep = "block",
-      right_sep = "block",
+      insert = {
+        a = { fg = colors.black, bg = colors.blue, gui = "bold" },
+      },
+      visual = {
+        a = { fg = colors.black, bg = colors.cyan, gui = "bold" },
+      },
+      replace = {
+        a = { fg = colors.black, bg = colors.red, gui = "bold" },
+      },
+      command = {
+        a = { fg = colors.black, bg = colors.yellow, gui = "bold" },
+      },
+      inactive = {
+        a = { fg = colors.white, bg = colors.black },
+        b = { fg = colors.white, bg = colors.black },
+        c = { fg = colors.white },
+      },
     }
 
-    component.scroll_bar = {
-      provider = function()
-        local chars = {
-          " ", " ", " ", " ", " ", " ", " ", " ",
-          " ", " ", " ", " ", " ", " ", " ", " ",
-          " ", " ", " ", " ", " ", " ", " ", " ",
-          " ", " ", " ", " ",
-        }
-        local cur = vim.api.nvim_win_get_cursor(0)[1]
-        local total = vim.api.nvim_buf_line_count(0)
-        local ratio = cur / total
-        local pos = math.floor(ratio * #chars)
-        local icon = chars[pos] or " "
-        if pos <= 1 then icon = " TOP" end
-        if pos >= #chars - 1 then icon = " BOT" end
-        return icon
-      end,
-      hl = function()
-        local cur = vim.api.nvim_win_get_cursor(0)[1]
-        local total = vim.api.nvim_buf_line_count(0)
-        local p = math.floor(cur / total * 100)
-        local fg, style = "purple", nil
-        if p <= 5 then
-          fg, style = "aqua", "bold"
-        elseif p >= 95 then
-          fg, style = "red", "bold"
-        end
-        return { fg = fg, bg = "bg", style = style }
-      end,
-      left_sep = "block",
-      right_sep = "block",
-    }
-
-    -- Hide statusline/winbar in Neo-tree buffers only
-    vim.api.nvim_create_autocmd('FileType', {
-      pattern = 'neo-tree',
-      callback = function()
-        -- blank local statusline overrides Feline's global one
-        vim.opt_local.statusline = " "
-        -- also kill winbar if you use it
-        vim.opt_local.winbar = ""
-      end,
-    })
-
-
-    -- Setup from gist: right side only
-    vim.api.nvim_set_hl(0, "StatusLine", { bg = theme.bg, fg = theme.aqua })
-    feline.setup({
-      components = {
-        active = {
-          {}, -- left (nothing)
-          {}, -- middle
-          {   -- right side
-            component.vim_mode,
-            component.file_type,
-            component.lsp,
-            component.git_branch,
-            component.git_add,
-            component.git_delete,
-            component.git_change,
-            component.separator,
-            component.diagnostic_errors,
-            component.diagnostic_warnings,
-            component.diagnostic_info,
-            component.diagnostic_hints,
-            component.scroll_bar,
+    require("lualine").setup({
+      options = {
+        theme = bubbles_theme,
+        component_separators = "",
+        section_separators = { left = "\u{e0b4}", right = "\u{e0b6}" },
+        disabled_filetypes = {
+          statusline = {},
+          winbar = {},
+        },
+        globalstatus = true,
+      },
+      sections = {
+        lualine_a = {
+          { "mode", separator = { right = "\u{e0b4}" }, right_padding = 2 },
+        },
+        lualine_b = {
+          {
+            "branch",
+            icon = "\u{e0a0}",
+            separator = { right = "\u{e0b4}" },
+            color = { fg = colors.black, bg = colors.teal, gui = "bold" },
+            cond = conditions.check_git_workspace,
+          },
+          {
+            "filename",
+            cond = conditions.buffer_not_empty,
+            file_status = true,
+            path = 1,
+            symbols = {
+              modified = "●",
+              readonly = "\u{f023}",
+              unnamed = "\u{f15b}",
+            },
+          },
+        },
+        lualine_c = {},
+        lualine_x = {
+          {
+            -- Git added lines
+            function()
+              local gitsigns = vim.b.gitsigns_status_dict
+              if gitsigns and gitsigns.added and gitsigns.added > 0 then
+                return "\u{f067} " .. gitsigns.added
+              end
+              return ""
+            end,
+            separator = { left = "\u{e0b6}" },
+            color = { fg = colors.black, bg = colors.green, gui = "bold" },
+            cond = conditions.check_git_workspace,
+          },
+          {
+            -- Git modified lines
+            function()
+              local gitsigns = vim.b.gitsigns_status_dict
+              if gitsigns and gitsigns.changed and gitsigns.changed > 0 then
+                return "\u{f459} " .. gitsigns.changed
+              end
+              return ""
+            end,
+            separator = { left = "\u{e0b6}" },
+            color = { fg = colors.black, bg = colors.violet, gui = "bold" },
+            cond = conditions.check_git_workspace,
+          },
+          {
+            -- Git deleted lines
+            function()
+              local gitsigns = vim.b.gitsigns_status_dict
+              if gitsigns and gitsigns.removed and gitsigns.removed > 0 then
+                return "\u{f458} " .. gitsigns.removed
+              end
+              return ""
+            end,
+            separator = { left = "\u{e0b6}" },
+            color = { fg = colors.black, bg = colors.red, gui = "bold" },
+            cond = conditions.check_git_workspace,
+          },
+          {
+            -- LSP Errors
+            function()
+              local errors = #vim.diagnostic.get(0, { severity = vim.diagnostic.severity.ERROR })
+              if errors > 0 then
+                return "\u{f06a} " .. errors
+              end
+              return ""
+            end,
+            separator = { left = "\u{e0b6}" },
+            color = { fg = colors.black, bg = colors.red, gui = "bold" },
+            cond = function()
+              return #vim.diagnostic.get(0, { severity = vim.diagnostic.severity.ERROR }) > 0
+            end,
+          },
+          {
+            -- LSP Warnings
+            function()
+              local warnings = #vim.diagnostic.get(0, { severity = vim.diagnostic.severity.WARN })
+              if warnings > 0 then
+                return "\u{f071} " .. warnings
+              end
+              return ""
+            end,
+            separator = { left = "\u{e0b6}" },
+            color = { fg = colors.black, bg = colors.yellow, gui = "bold" },
+            cond = function()
+              return #vim.diagnostic.get(0, { severity = vim.diagnostic.severity.WARN }) > 0
+            end,
+          },
+          {
+            -- LSP Info
+            function()
+              local info = #vim.diagnostic.get(0, { severity = vim.diagnostic.severity.INFO })
+              if info > 0 then
+                return "\u{f05a} " .. info
+              end
+              return ""
+            end,
+            separator = { left = "\u{e0b6}" },
+            color = { fg = colors.black, bg = colors.cyan, gui = "bold" },
+            cond = function()
+              return #vim.diagnostic.get(0, { severity = vim.diagnostic.severity.INFO }) > 0
+            end,
+          },
+          {
+            -- LSP Hints
+            function()
+              local hints = #vim.diagnostic.get(0, { severity = vim.diagnostic.severity.HINT })
+              if hints > 0 then
+                return "\u{f0eb} " .. hints
+              end
+              return ""
+            end,
+            separator = { left = "\u{e0b6}" },
+            color = { fg = colors.black, bg = colors.teal, gui = "bold" },
+            cond = function()
+              return #vim.diagnostic.get(0, { severity = vim.diagnostic.severity.HINT }) > 0
+            end,
+          },
+          {
+            -- Recording status
+            function()
+              local recording = vim.fn.reg_recording()
+              if recording ~= "" then
+                return "\u{f111} @" .. recording
+              end
+              return ""
+            end,
+            separator = { left = "\u{e0b6}" },
+            color = { fg = colors.white, bg = colors.red, gui = "bold" },
+          },
+          {
+            -- Search count
+            "searchcount",
+            icon = "\u{f002}",
+            separator = { left = "\u{e0b6}" },
+            color = { fg = colors.black, bg = colors.cyan, gui = "bold" },
+            cond = conditions.buffer_not_empty,
+          },
+          {
+            -- Trailing whitespace
+            function()
+              local trail = vim.fn.search("\\s$", "nw")
+              if trail ~= 0 then
+                return "\u{f0ad}"
+              end
+              return ""
+            end,
+            separator = { left = "\u{e0b6}" },
+            color = { fg = colors.black, bg = colors.orange, gui = "bold" },
+            cond = conditions.buffer_not_empty,
+          },
+          {
+            -- Mixed indentation
+            function()
+              local has_tabs = vim.fn.search("^\\t", "nw") ~= 0
+              local has_spaces = vim.fn.search("^ ", "nw") ~= 0
+              if has_tabs and has_spaces then
+                return "\u{f071}"
+              end
+              return ""
+            end,
+            separator = { left = "\u{e0b6}" },
+            color = { fg = colors.white, bg = colors.red, gui = "bold" },
+            cond = conditions.buffer_not_empty,
+          },
+          {
+            function()
+              local os_icon = "\u{f179}" -- Apple icon for macOS
+              if vim.fn.has("mac") == 1 or vim.fn.has("macunix") == 1 then
+                os_icon = "\u{f179}" -- Apple
+              elseif vim.fn.has("win32") == 1 or vim.fn.has("win64") == 1 then
+                os_icon = "\u{f17a}" -- Windows
+              else
+                os_icon = "\u{f17c}" -- Linux
+              end
+              return os_icon
+            end,
+            separator = { left = "\u{e0b6}" },
+            color = { fg = colors.black, bg = colors.magenta, gui = "bold" },
+          },
+        },
+        lualine_y = {
+          {
+            function()
+              local filetype = vim.bo.filetype
+              if filetype == "" then
+                return ""
+              end
+              local devicons = require("nvim-web-devicons")
+              local icon = devicons.get_icon_by_filetype(filetype)
+              return icon or ""
+            end,
+            separator = { left = "\u{e0b6}" },
+            color = { fg = colors.black, bg = colors.orange, gui = "bold" },
+          },
+          {
+            "progress",
+            separator = { left = "\u{e0b6}" },
+            color = { fg = colors.black, bg = colors.teal, gui = "bold" },
+          },
+        },
+        lualine_z = {
+          {
+            "location",
+            separator = { left = "\u{e0b6}" },
+            color = { fg = colors.black, bg = colors.blue, gui = "bold" },
           },
         },
       },
-      theme = theme,
-      vi_mode_colors = mode_theme,
+      inactive_sections = {
+        lualine_a = { "filename" },
+        lualine_b = {},
+        lualine_c = {},
+        lualine_x = {},
+        lualine_y = {},
+        lualine_z = { "location" },
+      },
+      tabline = {},
+      extensions = {
+        "neo-tree",
+        "lazy",
+        "trouble",
+        "oil",
+        "quickfix",
+        "fzf",
+      },
     })
   end,
 }
