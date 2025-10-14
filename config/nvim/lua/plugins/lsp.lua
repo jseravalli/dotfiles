@@ -140,31 +140,53 @@ return {
       return {
         appearance = {
           use_nvim_cmp_as_default = true,
+          nerd_font_variant = "mono",
           kind_icons = ok and lspkind.presets.default or {},
-          highlight_groups = {
-            Copilot = { fg = "#6E738D", italic = true },
-          },
         },
         completion = {
           documentation = {
             auto_show = true,
             auto_show_delay_ms = 100,
-            max_height = 20,
-            max_width = 80,
+            update_delay_ms = 50,
+            treesitter_highlighting = true,
             window = {
+              min_width = 10,
+              max_width = 80,
+              max_height = 20,
               border = "rounded",
-              winhighlight = "Normal:Normal,FloatBorder:FloatBorder",
+              winblend = 0,
+              winhighlight = "Normal:BlinkCmpDoc,FloatBorder:BlinkCmpDocBorder,EndOfBuffer:BlinkCmpDoc",
+              scrollbar = true,
             },
           },
           menu = {
+            min_width = 15,
+            max_height = 10,
             border = "rounded",
-            scrollbar = true,
             winblend = 8,
-            winhighlight = "Normal:Normal,FloatBorder:FloatBorder,CursorLine:Visual,Search:None",
+            scrollbar = true,
+            scrolloff = 2,
+            winhighlight = "Normal:BlinkCmpMenu,FloatBorder:BlinkCmpMenuBorder,CursorLine:BlinkCmpMenuSelection,Search:None",
           },
         },
         sources = {
           default = { "lsp", "path", "snippets", "buffer" },
+        },
+        signature = {
+          enabled = true,
+          trigger = {
+            enabled = true,
+            show_on_insert_on_trigger_character = true,
+          },
+          window = {
+            min_width = 1,
+            max_width = 80,
+            max_height = 10,
+            border = "rounded",
+            winblend = 0,
+            winhighlight = "Normal:BlinkCmpSignatureHelp,FloatBorder:BlinkCmpSignatureHelpBorder",
+            scrollbar = true,
+          },
         },
         snippets = {
           expand = function(args)
@@ -190,6 +212,9 @@ return {
       }
     end,
     config = function(_, opts)
+      -- Set custom highlight groups for Copilot
+      vim.api.nvim_set_hl(0, "BlinkCmpKindCopilot", { fg = "#6E738D", italic = true })
+
       require("blink.cmp").setup(opts)
     end,
   },
