@@ -19,3 +19,9 @@ export NVM_DIR="$HOME/.nvm"
   [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
 
 export TERM=wezterm
+
+export OPENCODE_CONFIG=~/.config/ai/config.json
+export PATH="/Users/jose/.local/bin:$PATH"
+
+# Rust environment (cargo binaries)
+[ -f "$HOME/.cargo/env" ] && source "$HOME/.cargo/env"

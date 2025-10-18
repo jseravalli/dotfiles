@@ -4,3 +4,4 @@ config/tmux/plugins
 
 # Neovim session files
 .nvim/
+.aider*

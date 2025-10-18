@@ -1,6 +1,33 @@
 return {
   "folke/trouble.nvim",
-  opts = {}, -- for default options, refer to the configuration section for custom setup.
+  opts = {
+    modes = {
+      -- Custom mode for showing diagnostics at cursor
+      diagnostics_cursor = {
+        mode = "diagnostics",
+        filter = {
+          any = {
+            buf = 0, -- current buffer only
+            {
+              severity = vim.diagnostic.severity.HINT,
+              function(item)
+                return item.pos[1] == vim.fn.line(".") - 1
+              end,
+            },
+          },
+        },
+        preview = {
+          type = "float",
+          border = "rounded",
+          title = "Diagnostic Preview",
+          title_pos = "center",
+          position = { 0, -2 },
+          size = { width = 0.4, height = 0.3 },
+          zindex = 200,
+        },
+      },
+    },
+  },
   cmd = "Trouble",
   keys = {
     {

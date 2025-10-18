@@ -56,20 +56,37 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
   # You should create NVM’s working directory if it doesn’t exist:
   mkdir -p ~/.nvm
 
-
   export NVM_DIR="$HOME/.nvm"
     [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"
     [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"
-
 
   nvm install --lts
   nvm use --lts
   nvm alias default 'lts/*'
 
+  echo "Installing AI tools"
+  brew install ollama
+  npm i -g opencode-ai
 
   echo "→ Installing lsp servers"
   npm install -g typescript typescript-language-server
   brew install lua-language-server
+
+  echo "→ Installing Rust toolchain"
+  if ! command -v rustup >/dev/null 2>&1; then
+    echo "Installing rustup..."
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable
+    source "$HOME/.cargo/env"
+  else
+    echo "✔️ rustup already installed"
+  fi
+
+  # Install rust-analyzer and clippy
+  rustup component add rust-analyzer clippy rustfmt
+
+  # Optional: Install codelldb for debugging support
+  echo "→ Installing codelldb for Rust debugging (optional)"
+  brew install llvm
 
   echo "enabling curly lines"
   tempfile=$(mktemp) \
@@ -113,6 +130,22 @@ elif [[ -f /etc/debian_version ]]; then
 
   echo "→ Installing syntax highlighting (Debian)"
   sudo apt-get -y install zsh-syntax-highlighting
+
+  echo "→ Installing Rust toolchain (Debian/Ubuntu)"
+  if ! command -v rustup >/dev/null 2>&1; then
+    echo "Installing rustup..."
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable
+    source "$HOME/.cargo/env"
+  else
+    echo "✔️ rustup already installed"
+  fi
+
+  # Install rust-analyzer and clippy
+  rustup component add rust-analyzer clippy rustfmt
+
+  # Optional: Install build dependencies for debugging
+  echo "→ Installing LLVM for Rust debugging (optional)"
+  sudo apt-get install -y lldb
 else
     echo "⚠️ Unsupported OS. Please install WezTerm and Starship manually."
 fi

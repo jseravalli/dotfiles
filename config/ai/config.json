@@ -1,0 +1,68 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "theme": "tokyonight",
+
+  // Use your local Ollama as the provider
+  "provider": {
+    "ollama": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "Ollama (local)",
+      "options": {
+        "baseURL": "http://localhost:11434/v1"
+      },
+      "models": {
+        // 💬 Instruct model (4.7GB, chat + native tool calling)
+        "qwen:tools": {
+          "name": "Qwen2.5 7B Instruct",
+          "id": "qwen:tools",
+          "tools": true,
+        }
+      }
+    }
+  },
+
+  // Default model: 7B instruct (chat + tools)
+  "model": "ollama/qwen:tools",
+
+  // Load Claude-like instructions from the project you start in
+  // "instructions": ["./claude.md"],  // Disabled for speed
+
+  // Enable all built-in tools
+  "tools": {
+    "bash": true,
+    "edit": true,
+    "write": true,
+    "read": true,
+    "grep": true,
+    "glob": true,
+    "list": true,
+    "patch": true,
+    "todowrite": true,
+    "todoread": true,
+    "webfetch": true
+  },
+
+  // Primary agent configuration (OpenCode standard)
+  "agent": {
+    "build": {
+      "description": "Primary coding agent with qwen2.5:7b-instruct",
+      "mode": "primary",
+      "model": "ollama/qwen:tools",
+      // "instructions": ["./claude.md"],  // Disabled for speed
+      "tools": {
+        "bash": true,
+        "edit": true,
+        "write": true,
+        "read": true,
+        "grep": true,
+        "glob": true,
+        "list": true,
+        "patch": true,
+        "todowrite": true,
+        "todoread": true,
+        "webfetch": true
+      }
+    }
+  }
+}
+

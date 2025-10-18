@@ -18,7 +18,6 @@ return {
 
       -- ⌘+E to toggle Neo-tree (requires wezterm keymap trick to send Ctrl+E)
       vim.keymap.set("n", "<C-e>", ":Neotree toggle<CR>", { silent = true, desc = "Toggle Neo-tree" })
-      vim.keymap.set("n", "<leader>e", ":Neotree source=filesystem reveal=true<CR>", { silent = true, desc = "Reveal Neo-tree" })
     end,
   },
 }
