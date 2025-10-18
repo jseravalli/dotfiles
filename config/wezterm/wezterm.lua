@@ -63,23 +63,23 @@ local function background_layers(file)
   -- Image layer (fit without cropping) + a subtle dark overlay on top
   return {
     {
-      source = { Color = "#1c1c1c" },
+      source = { Color = "#111010" },
       width = "100%",
       height = "100%",
     },
-    {
-      source           = { File = file },
-      height           = "Contain",
-      width            = "Contain",
-      repeat_x         = "NoRepeat",
-      repeat_y         = "NoRepeat",
-      horizontal_align = "Center",
-      vertical_align   = "Middle",
-      -- optional extra dimming of the image itself:
-      hsb              = { brightness = 0.015, saturation = 0.8, hue = 1.0 },
-      opacity          = 1.0,
-    },
-    -- Top overlay to improve readability regardless of the image
+    -- {
+    --   source           = { File = file },
+    --   height           = "Contain",
+    --   width            = "Contain",
+    --   repeat_x         = "NoRepeat",
+    --   repeat_y         = "NoRepeat",
+    --   horizontal_align = "Center",
+    --   vertical_align   = "Middle",
+    --   -- optional extra dimming of the image itself:
+    --   hsb              = { brightness = 0.015, saturation = 0.8, hue = 1.0 },
+    --   opacity          = 1.0,
+    -- },
+    -- -- Top overlay to improve readability regardless of the image
     {
       source = { Color = "black" },
       opacity = 0.10,
@@ -123,14 +123,14 @@ local config = {
 
   -- Keys
   keys = {
-    { key = "r", mods = "CTRL|SHIFT", action = wezterm.action.ReloadConfiguration },
-    { key = "e", mods = "CMD",        action = wezterm.action.SendKey { key = "e", mods = "CTRL" } },
-    { key = "s", mods = "CMD",        action = wezterm.action.SendKey { key = "s", mods = "CTRL" } },
-    { key = "LeftArrow", mods = "CMD",  action = wezterm.action.SendKey { key = "LeftArrow", mods = "ALT" } },
-    { key = "RightArrow", mods = "CMD", action = wezterm.action.SendKey { key = "RightArrow", mods = "ALT" } },
+    { key = "r",          mods = "CTRL|SHIFT", action = wezterm.action.ReloadConfiguration },
+    { key = "e",          mods = "CMD",        action = wezterm.action.SendKey { key = "e", mods = "CTRL" } },
+    { key = "s",          mods = "CMD",        action = wezterm.action.SendKey { key = "s", mods = "CTRL" } },
+    { key = "LeftArrow",  mods = "CMD",        action = wezterm.action.SendKey { key = "LeftArrow", mods = "ALT" } },
+    { key = "RightArrow", mods = "CMD",        action = wezterm.action.SendKey { key = "RightArrow", mods = "ALT" } },
     {
       key = "r",
-      mods = "CMD",            -- ⌘W: next wallpaper instead of close
+      mods = "CMD", -- ⌘W: next wallpaper instead of close
       action = wezterm.action_callback(function(window, pane)
         local next_wp = get_next_wallpaper()
         if next_wp then
