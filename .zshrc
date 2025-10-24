@@ -17,6 +17,7 @@ alias vi="nvim"
 alias ls="eza -l --git-ignore --icons --git -TL 2"
 alias grep="rg"
 alias tmux="tmux -f ~/.config/tmux/tmux.conf attach || tmux -f ~/.config/tmux/tmux.conf new"
+alias claude="claude --dangerously-skip-permissions"
 
 # Load Starship prompt
 eval "$(starship init zsh)"
