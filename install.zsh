@@ -65,6 +65,13 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
   nvm use --lts
   nvm alias default 'lts/*'
 
+  echo "→ Installing SDKMAN (Java version manager)"
+  if [ ! -d "$HOME/.sdkman" ]; then
+    curl -s "https://get.sdkman.io" | bash
+    echo "✔️ SDKMAN installed. Restart your shell or source ~/.zshrc to use it."
+  else
+    echo "✔️ SDKMAN already installed"
+  fi
 
   echo "→ Installing lsp servers"
   npm install -g @github/copilot-language-server
@@ -114,6 +121,14 @@ elif [[ -f /etc/debian_version ]]; then
 
   echo "→ Installing syntax highlighting (Debian)"
   sudo apt-get -y install zsh-syntax-highlighting
+
+  echo "→ Installing SDKMAN (Java version manager)"
+  if [ ! -d "$HOME/.sdkman" ]; then
+    curl -s "https://get.sdkman.io" | bash
+    echo "✔️ SDKMAN installed. Restart your shell or source ~/.zshrc to use it."
+  else
+    echo "✔️ SDKMAN already installed"
+  fi
 else
     echo "⚠️ Unsupported OS. Please install WezTerm and Starship manually."
 fi
