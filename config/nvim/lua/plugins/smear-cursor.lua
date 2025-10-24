@@ -12,16 +12,18 @@ return {
 		-- Attempt to hide the real cursor when smearing
 		hide_target_hack = true,
 
-		-- Minimum time (in ms) between smear updates
-		stiffness = 0.8,
-		trailing_stiffness = 0.5,
-		trailing_exponent = 0.1,
+		-- MORE EXAGGERATED smear with fast head and dramatic trail
+		stiffness = 0.9,              -- Higher = faster cursor head movement
+		trailing_stiffness = 0.3,     -- Lower = longer, more dramatic trail
+		trailing_exponent = 0.5,      -- Higher = more visible trail particles
 
-		-- How fast the smear's head moves towards the target
-		gamma = 0.8,
+		-- Add damping for more elastic, overshooting effect
+		damping = 0.7,                -- Lower = more elastic/bouncy (default 0.95)
 
-		-- Controls the smear's color blending
-		distance_stop_animating = 0.5,
-		hide_target_hack = true,
+		-- Allow animation over longer distances
+		distance_stop_animating = 0.3,
+
+		-- Increase the length of the trail
+		max_slope = 0.5,              -- Makes diagonal movements smoother
 	},
 }
