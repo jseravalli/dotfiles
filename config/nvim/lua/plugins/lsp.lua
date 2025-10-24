@@ -68,7 +68,6 @@ return {
 
 
 
-
       vim.lsp.config("biome", {
         cmd = { "biome", "lsp-proxy" }, -- Biome's LSP mode
         filetypes = { "javascript", "javascriptreact", "typescript", "typescriptreact", "json", "jsonc" },

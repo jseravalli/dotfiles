@@ -52,6 +52,17 @@ vim.opt.shiftwidth = 2   -- >> indents by 2 spaces
 vim.opt.softtabstop = 2  -- <Tab> in insert mode counts as 2 spaces
 vim.opt.expandtab = true -- Convert tabs to spaces
 
+-- Always use the system clipboard
+vim.opt.clipboard = "unnamedplus"
+
+-- Highlight yanked text
+vim.api.nvim_create_autocmd("TextYankPost", {
+  callback = function()
+    vim.highlight.on_yank({ higroup = "IncSearch", timeout = 150 })
+  end,
+})
+
+
 vim.api.nvim_create_autocmd("BufWritePre", {
   pattern = { "*.ts", "*.tsx", "*.js", "*.lua", "*.py" },
   callback = function()
